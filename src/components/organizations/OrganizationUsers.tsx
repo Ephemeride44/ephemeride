@@ -154,7 +154,7 @@ export const OrganizationUsers: React.FC<OrganizationUsersProps> = ({ organizati
 
             try {
               const { data: { session } } = await supabase.auth.getSession();
-              const supabaseUrl = 'https://kgjvfuzdnbvgxkbndwfr.supabase.co';
+              const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
               const response = await fetch(`${supabaseUrl}/functions/v1/invite-user`, {
                 method: 'POST',
                 headers: {

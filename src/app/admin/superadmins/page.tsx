@@ -105,7 +105,7 @@ const SuperAdminsAdmin: React.FC = () => {
         return;
       }
 
-      const supabaseUrl = 'https://kgjvfuzdnbvgxkbndwfr.supabase.co';
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
       const response = await fetch(`${supabaseUrl}/functions/v1/invite-super-admin`, {
         method: 'POST',
         headers: {

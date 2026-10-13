@@ -129,7 +129,7 @@ const Signup: React.FC = () => {
       if (data.user) {        // Essayer de confirmer l'email via Edge Function si c'est une invitation
         if (invitationId) {
           try {
-            const supabaseUrl = 'https://kgjvfuzdnbvgxkbndwfr.supabase.co';
+            const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
             await fetch(`${supabaseUrl}/functions/v1/confirm-invited-user`, {
               method: 'POST',
               headers: {
