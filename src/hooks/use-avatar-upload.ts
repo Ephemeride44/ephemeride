@@ -2,6 +2,7 @@
 
 import { useCallback, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { compressImage } from "@/lib/compressImage";
 import { useAuth } from "@/hooks/use-auth";
 import { useToast } from "@/hooks/use-toast";
 
@@ -29,12 +30,13 @@ export const useAvatarUpload = (onChange?: () => void) => {
   const [isUploading, setIsUploading] = useState(false);
 
   const uploadFile = useCallback(
-    async (file: File): Promise<boolean> => {
+    async (original: File): Promise<boolean> => {
       if (!user) return false;
-      if (!file.type.startsWith("image/")) {
+      if (!original.type.startsWith("image/")) {
         toast({ title: "Format invalide", description: "Sélectionnez une image (JPG ou PNG).", variant: "destructive" });
         return false;
       }
+      const file = await compressImage(original, { maxDimension: 512 });
       if (file.size > 2 * 1024 * 1024) {
         toast({ title: "Image trop lourde", description: "2 Mo maximum.", variant: "destructive" });
         return false;

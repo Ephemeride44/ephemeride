@@ -3,6 +3,7 @@
 import { useState, useCallback, useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { compressImage } from "@/lib/compressImage";
 import type { Database } from "@/integrations/supabase/types";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -128,16 +129,18 @@ const SettingsAdmin = () => {
     let image_url = null;
     let image_url_light = null;
     if (selectedFile) {
-      const filePath = `themes/${Date.now()}_${sanitizeFileName(selectedFile.name)}`;
-      const { error: uploadError } = await supabase.storage.from('event-assets').upload(filePath, selectedFile, { upsert: true });
+      const selectedFileCompressed = await compressImage(selectedFile, { maxDimension: 512 });
+      const filePath = `themes/${Date.now()}_${sanitizeFileName(selectedFileCompressed.name)}`;
+      const { error: uploadError } = await supabase.storage.from('event-assets').upload(filePath, selectedFileCompressed, { upsert: true });
       if (!uploadError) {
         const { data: publicUrlData } = supabase.storage.from('event-assets').getPublicUrl(filePath);
         image_url = publicUrlData.publicUrl;
       }
     }
     if (selectedFileLight) {
-      const filePathLight = `themes/${Date.now()}_${sanitizeFileName(selectedFileLight.name)}`;
-      const { error: uploadErrorLight } = await supabase.storage.from('event-assets').upload(filePathLight, selectedFileLight, { upsert: true });
+      const selectedFileLightCompressed = await compressImage(selectedFileLight, { maxDimension: 512 });
+      const filePathLight = `themes/${Date.now()}_${sanitizeFileName(selectedFileLightCompressed.name)}`;
+      const { error: uploadErrorLight } = await supabase.storage.from('event-assets').upload(filePathLight, selectedFileLightCompressed, { upsert: true });
       if (!uploadErrorLight) {
         const { data: publicUrlDataLight } = supabase.storage.from('event-assets').getPublicUrl(filePathLight);
         image_url_light = publicUrlDataLight.publicUrl;
@@ -213,16 +216,18 @@ const SettingsAdmin = () => {
     let image_url = editTheme.image_url;
     let image_url_light = editTheme.image_url_light;
     if (editFile) {
-      const filePath = `themes/${Date.now()}_${sanitizeFileName(editFile.name)}`;
-      const { error: uploadError } = await supabase.storage.from('event-assets').upload(filePath, editFile, { upsert: true });
+      const editFileCompressed = await compressImage(editFile, { maxDimension: 512 });
+      const filePath = `themes/${Date.now()}_${sanitizeFileName(editFileCompressed.name)}`;
+      const { error: uploadError } = await supabase.storage.from('event-assets').upload(filePath, editFileCompressed, { upsert: true });
       if (!uploadError) {
         const { data: publicUrlData } = supabase.storage.from('event-assets').getPublicUrl(filePath);
         image_url = publicUrlData.publicUrl;
       }
     }
     if (editFileLight) {
-      const filePathLight = `themes/${Date.now()}_${sanitizeFileName(editFileLight.name)}`;
-      const { error: uploadErrorLight } = await supabase.storage.from('event-assets').upload(filePathLight, editFileLight, { upsert: true });
+      const editFileLightCompressed = await compressImage(editFileLight, { maxDimension: 512 });
+      const filePathLight = `themes/${Date.now()}_${sanitizeFileName(editFileLightCompressed.name)}`;
+      const { error: uploadErrorLight } = await supabase.storage.from('event-assets').upload(filePathLight, editFileLightCompressed, { upsert: true });
       if (!uploadErrorLight) {
         const { data: publicUrlDataLight } = supabase.storage.from('event-assets').getPublicUrl(filePathLight);
         image_url_light = publicUrlDataLight.publicUrl;

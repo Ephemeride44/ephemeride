@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
+import { compressImage } from '@/lib/compressImage';
 import { useToast } from '@/hooks/use-toast';
 import { useUserRoleContext } from '@/components/UserRoleProvider';
 import { User, Lock, Mail, Save, Eye, EyeOff, Upload, X } from 'lucide-react';
@@ -182,14 +183,15 @@ const Profile: React.FC = () => {
       }
 
       // Uploader le nouvel avatar dans le bucket avatars
-      const fileExt = avatarFile.name.split('.').pop();
+      const file = await compressImage(avatarFile, { maxDimension: 512 });
+      const fileExt = file.name.split('.').pop();
       const fileName = `${Date.now()}.${fileExt}`;
       // Stocker dans un dossier avec le user_id pour les politiques RLS
       const filePath = `${user.id}/${fileName}`;
 
       const { error: uploadError } = await supabase.storage
         .from('avatars')
-        .upload(filePath, avatarFile, { upsert: true });
+        .upload(filePath, file, { upsert: true });
 
       if (uploadError) {
         throw uploadError;

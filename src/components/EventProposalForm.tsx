@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/hooks/use-toast";
 import { Card, CardContent } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
+import { compressImage } from "@/lib/compressImage";
 import { useTheme } from "@/components/ThemeProvider";
 import { formatCityName, formatPrice, sanitizeFileName } from "@/lib/utils";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -92,10 +93,11 @@ const EventProposalForm = ({ onClose }: { onClose: () => void }) => {
   const uploadCoverIfNeeded = async (): Promise<string | null | undefined> => {
     if (!coverFile) return null;
     setIsUploading(true);
-    const filePath = `covers/${Date.now()}_${sanitizeFileName(coverFile.name)}`;
+    const file = await compressImage(coverFile);
+    const filePath = `covers/${Date.now()}_${sanitizeFileName(file.name)}`;
     const { error: uploadError } = await supabase.storage
       .from("event-assets")
-      .upload(filePath, coverFile, { upsert: true });
+      .upload(filePath, file, { upsert: true });
     setIsUploading(false);
     if (uploadError) {
       toast({

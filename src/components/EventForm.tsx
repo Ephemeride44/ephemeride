@@ -10,6 +10,7 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@
 import { useEffect, useState, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { compressImage } from "@/lib/compressImage";
 import { useDropzone } from "react-dropzone";
 import { X, Trash2, Bell } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
@@ -259,8 +260,9 @@ const EventForm = ({ event, onSave, onCancel, showValidationActions, themes, the
   const uploadCoverIfNeeded = async (currentCoverUrl: string | null): Promise<string | null | undefined> => {
     if (!coverFile) return currentCoverUrl;
     setIsUploading(true);
-    const filePath = `covers/${Date.now()}_${sanitizeFileName(coverFile.name)}`;
-    const { error: uploadError } = await supabase.storage.from('event-assets').upload(filePath, coverFile, { upsert: true });
+    const file = await compressImage(coverFile);
+    const filePath = `covers/${Date.now()}_${sanitizeFileName(file.name)}`;
+    const { error: uploadError } = await supabase.storage.from('event-assets').upload(filePath, file, { upsert: true });
     setIsUploading(false);
     if (uploadError) {
       toast({

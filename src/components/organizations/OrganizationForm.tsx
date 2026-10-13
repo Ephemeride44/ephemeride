@@ -11,6 +11,7 @@ import { Separator } from '@/components/ui/separator';
 import { GradientAvatar } from '@/components/account/GradientAvatar';
 import { useToast } from '@/hooks/use-toast';
 import { supabase as baseSupabase } from '@/integrations/supabase/client';
+import { compressImage } from '@/lib/compressImage';
 import type { SupabaseClient } from '@supabase/supabase-js';
 import type { Database } from '@/integrations/supabase/types';
 
@@ -55,12 +56,13 @@ export const OrganizationForm: React.FC<OrganizationFormProps> = ({
   // affiches d'événements).
   const onDropLogo = useCallback(
     async (files: File[]) => {
-      const file = files[0];
-      if (!file) return;
-      if (!file.type.startsWith('image/')) {
+      if (!files[0]) return;
+      if (!files[0].type.startsWith('image/')) {
         toast({ title: 'Format invalide', description: 'Sélectionnez une image (JPG ou PNG).', variant: 'destructive' });
         return;
       }
+      // Logo affiché en avatar (≤ 80px) : 512px suffisent largement.
+      const file = await compressImage(files[0], { maxDimension: 512 });
       if (file.size > 2 * 1024 * 1024) {
         toast({ title: 'Image trop lourde', description: '2 Mo maximum.', variant: 'destructive' });
         return;
