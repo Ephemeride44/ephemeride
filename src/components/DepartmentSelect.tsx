@@ -52,7 +52,9 @@ const DepartmentSelect = ({
     : "border-white/20 bg-white/10 text-white hover:bg-white/10 hover:text-white";
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    // modal : la liste est rendue dans un portail, hors de la modale de
+    // proposition ; sans ça, le verrou de scroll du Dialog bloque la molette.
+    <Popover open={open} onOpenChange={setOpen} modal>
       <PopoverTrigger asChild>
         <Button
           id={id}
@@ -71,7 +73,9 @@ const DepartmentSelect = ({
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[--radix-popover-trigger-width] p-0" align="start">
+      {/* z-[80] : la liste doit passer au-dessus de la modale de proposition
+          d'événement (DialogContent en z-[70] sur la home). */}
+      <PopoverContent className="z-[80] w-[--radix-popover-trigger-width] p-0" align="start">
         <Command
           filter={(itemValue, search) =>
             itemValue.toLowerCase().includes(search.toLowerCase()) ? 1 : 0
