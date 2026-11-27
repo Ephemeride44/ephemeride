@@ -39,10 +39,13 @@ import {
 
 type EventRow = Database["public"]["Tables"]["events"]["Row"];
 type ThemeRow = Database["public"]["Tables"]["themes"]["Row"];
+type CreatorInfo = { email: string | null; full_name: string | null };
 
 const AdminDashboard = () => {
   const [pendingEvents, setPendingEvents] = useState<EventRow[]>([]);
   const [acceptedEvents, setAcceptedEvents] = useState<EventRow[]>([]);
+  // Compte connecté ayant créé chaque événement, indexé par id d'événement.
+  const [creators, setCreators] = useState<Record<string, CreatorInfo>>({});
   const [themes, setThemes] = useState<ThemeRow[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
@@ -80,6 +83,7 @@ const AdminDashboard = () => {
     is_cancelled: false,
     status: 'pending',
     createdby: null,
+    created_by: null,
     updated_at: '',
     organization_id: null,
     ticketing_url: null,
@@ -108,6 +112,26 @@ const AdminDashboard = () => {
     fetchThemes();
   }, []);
 
+  // Charge le compte créateur des événements affichés (RPC réservée à l'admin).
+  const loadCreators = async (rows: EventRow[]) => {
+    const ids = rows.filter((e) => e.created_by).map((e) => e.id);
+    if (ids.length === 0) return;
+    const { data, error } = await supabase.rpc('get_event_creators', { p_event_ids: ids });
+    if (error) {
+      console.error('Erreur lors du chargement des créateurs :', error);
+      return;
+    }
+    setCreators((prev) => ({
+      ...prev,
+      ...Object.fromEntries(
+        (data ?? []).map((c): [string, CreatorInfo] => [
+          c.event_id,
+          { email: c.email, full_name: c.full_name },
+        ])
+      ),
+    }));
+  };
+
   const fetchPendingEvents = async () => {
     let query = supabase
       .from('events')
@@ -134,6 +158,7 @@ const AdminDashboard = () => {
       return;
     }
     setPendingEvents(data || []);
+    loadCreators(data || []);
   };
 
   const fetchAcceptedEvents = async () => {
@@ -175,6 +200,7 @@ const AdminDashboard = () => {
       return;
     }
     setAcceptedEvents(data || []);
+    loadCreators(data || []);
     setTotal(count || 0);
   };
 
@@ -602,6 +628,16 @@ const AdminDashboard = () => {
                             >
                               {(event.createdby as { email?: string }).email}
                             </a>
+                          ) : null}
+                          {creators[event.id] ? (
+                            <div className="mt-1 text-xs text-muted-foreground" title="Compte connecté ayant créé l'événement">
+                              <p>Compte : {creators[event.id].full_name ?? 'nom non renseigné'}</p>
+                              {creators[event.id].email ? (
+                                <a href={`mailto:${creators[event.id].email}`} className="hover:underline">
+                                  {creators[event.id].email}
+                                </a>
+                              ) : null}
+                            </div>
                           ) : null}
                         </div>
                       </TableCell>

@@ -112,7 +112,7 @@ const DayEventCard = ({ event: eventProp, size = "desktop", onChanged }: DayEven
 
   const card = (
     <div
-      className="flex overflow-hidden rounded-2xl border-0 shadow-sm bg-white dark:bg-ephemeride-light text-[#1B263B] dark:text-[#faf3ec]"
+      className="flex overflow-hidden rounded-none border-0 shadow-sm bg-white dark:bg-ephemeride-light text-[#1B263B] dark:text-[#faf3ec]"
       style={{ opacity: event.is_cancelled ? 0.62 : 1 }}
     >
       {/* Colonne média */}
@@ -149,7 +149,7 @@ const DayEventCard = ({ event: eventProp, size = "desktop", onChanged }: DayEven
                   <img
                     src={event.cover_url}
                     alt="Affiche de l'événement"
-                    className="h-full w-full object-cover transition-transform hover:scale-105"
+                    className="h-full w-full object-cover"
                   />
                   {timeLabel && (
                     <span
@@ -365,7 +365,7 @@ const DayEventCard = ({ event: eventProp, size = "desktop", onChanged }: DayEven
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={(e) => e.stopPropagation()}
-                    className="inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold transition-colors border-gray-300 text-[#1B263B] hover:bg-gray-50 dark:border-white/20 dark:text-[#faf3ec] dark:hover:bg-white/10"
+                    className="inline-flex items-center gap-1.5 rounded-none border px-3 py-1 text-xs font-semibold transition-colors border-gray-300 text-[#1B263B] hover:bg-gray-50 dark:border-white/20 dark:text-[#faf3ec] dark:hover:bg-white/10"
                   >
                     Découvrir l'événement
                     <ArrowRight className="h-4 w-4" />
