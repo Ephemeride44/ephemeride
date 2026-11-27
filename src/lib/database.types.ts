@@ -95,6 +95,7 @@ export type Database = {
         Row: {
           audience: string | null
           cover_url: string | null
+          created_by: string | null
           createdby: Json | null
           emoji: string | null
           end_at: string | null
@@ -118,6 +119,7 @@ export type Database = {
         Insert: {
           audience?: string | null
           cover_url?: string | null
+          created_by?: string | null
           createdby?: Json | null
           emoji?: string | null
           end_at?: string | null
@@ -141,6 +143,7 @@ export type Database = {
         Update: {
           audience?: string | null
           cover_url?: string | null
+          created_by?: string | null
           createdby?: Json | null
           emoji?: string | null
           end_at?: string | null
@@ -577,6 +580,15 @@ export type Database = {
           user_email: string
           user_id: string
           user_raw_user_meta_data: Json
+        }[]
+      }
+      get_event_creators: {
+        Args: { p_event_ids: string[] }
+        Returns: {
+          email: string | null
+          event_id: string
+          full_name: string | null
+          user_id: string
         }[]
       }
       get_super_admins_with_user_info: {

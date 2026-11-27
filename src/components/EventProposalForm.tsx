@@ -127,6 +127,9 @@ const EventProposalForm = ({ onClose }: { onClose: () => void }) => {
     e.preventDefault();
 
     const createdby = { name: formData.proposerName, email: formData.proposerEmail };
+    // Compte connecté au moment de la proposition (null si anonyme).
+    const { data: authData } = await supabase.auth.getUser();
+    const created_by = authData.user?.id ?? null;
 
     if (eventType === "recurring") {
       // Validation de la récurrence
@@ -189,6 +192,7 @@ const EventProposalForm = ({ onClose }: { onClose: () => void }) => {
         ...occ,
         status: "pending",
         createdby,
+        created_by,
         recurrence_id: recurrenceData.id,
       }));
       const { error: insertError } = await supabase.from("events").insert(rows);
@@ -232,6 +236,7 @@ const EventProposalForm = ({ onClose }: { onClose: () => void }) => {
       end_at: formData.endTime ? `${formData.date}T${formData.endTime}:00` : null,
       status: "pending",
       createdby,
+      created_by,
     });
     if (error) {
       toast({
