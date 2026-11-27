@@ -140,7 +140,7 @@ const EventCard = ({ event: eventProp, isPast = false, showDate = true }: EventC
                 <img
                   src={event.cover_url}
                   alt="Affiche de l'événement"
-                  className={`h-56 w-full md:h-full object-cover cursor-pointer transition-transform hover:scale-105 ${isPast ? 'opacity-60' : ''}`}
+                  className={`h-56 w-full md:h-full object-cover cursor-pointer ${isPast ? 'opacity-60' : ''}`}
                   onClick={e => { e.preventDefault(); e.stopPropagation(); setOpenDialog(true); }}
                   tabIndex={0}
                   aria-label="Voir l'affiche en grand"
@@ -346,7 +346,7 @@ const EventCard = ({ event: eventProp, isPast = false, showDate = true }: EventC
                         target="_blank"
                         rel="noopener noreferrer"
                         onClick={(e) => e.stopPropagation()}
-                        className={`flex items-center gap-2 rounded-full px-4 py-2 text-xs font-medium border transition-colors ${theme === 'dark'
+                        className={`flex items-center gap-2 rounded-none px-4 py-2 text-xs font-medium border transition-colors ${theme === 'dark'
                           ? 'border-white/20 text-white hover:bg-white/10'
                           : 'border-gray-300 text-gray-700 hover:bg-gray-50'
                           }`}
@@ -394,7 +394,7 @@ const EventCard = ({ event: eventProp, isPast = false, showDate = true }: EventC
   const card = (
     <Card
       id={`event-${event.id}`}
-      className={`${theme === 'dark' ? 'bg-ephemeride-light' : 'bg-white'} ${theme === 'dark' ? 'text-[#faf3ec]' : 'text-[#1B263B]'} mb-4 animate-fade-in hover:shadow-lg transition-all duration-200 border-0 shadow-sm overflow-hidden rounded-2xl scroll-mt-24`}
+      className={`${theme === 'dark' ? 'bg-ephemeride-light' : 'bg-white'} ${theme === 'dark' ? 'text-[#faf3ec]' : 'text-[#1B263B]'} mb-4 animate-fade-in hover:shadow-lg transition-all duration-200 border-0 shadow-sm overflow-hidden rounded-none scroll-mt-24`}
     >
       <CardContent className="p-0 h-full">
         {cardContent}
